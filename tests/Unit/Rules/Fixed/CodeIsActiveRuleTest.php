@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Rules\Fixed;
 
 use App\Enums\PromoCodeStatus;
-use App\Exceptions\RuleValidationException;
 use App\Rules\Fixed\CodeIsActiveRule;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -18,21 +17,21 @@ class CodeIsActiveRuleTest extends TestCase
         $rule = new CodeIsActiveRule();
         $promoCode = PromoCodeFactory::new()->withStatus(PromoCodeStatus::Active)->create();
 
-        $this->assertTrue($rule->isSatisfiedBy($promoCode));
+        $result = $rule->isSatisfiedBy($promoCode);
+
+        $this->assertTrue($result->isValid);
     }
 
     #[DataProvider('nonActiveStatusProvider')]
-    public function test_it_blocks_and_throws_exception_when_status_is_not_active(PromoCodeStatus $status): void
+    public function test_it_blocks_when_status_is_not_active(PromoCodeStatus $status): void
     {
         $rule = new CodeIsActiveRule();
         $promoCode = PromoCodeFactory::new()->withStatus($status)->create();
 
-        try {
-            $rule->isSatisfiedBy($promoCode);
-            $this->fail('Expected RuleValidationException was not thrown');
-        } catch (RuleValidationException $e) {
-            $this->assertEquals('invalid_code', $e->getErrorCode());
-        }
+        $result = $rule->isSatisfiedBy($promoCode);
+
+        $this->assertFalse($result->isValid);
+        $this->assertEquals('invalid_code', $result->errorCode);
     }
 
     public static function nonActiveStatusProvider(): array

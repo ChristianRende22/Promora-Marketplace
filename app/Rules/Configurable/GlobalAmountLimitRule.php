@@ -21,7 +21,7 @@ class GlobalAmountLimitRule implements RuleSpecificationInterface
         $context = $order->getOrderContext();
         $currentAmount = $this->repository->getGlobalDiscountAmount($this->promoCode, $context->currentOrders);
 
-        if ($currentAmount + $order->getSubtotal() > $this->maxAmount) {
+        if ($currentAmount >= $this->maxAmount) {
             return ValidationResult::failed('maximum_discount_reached');
         }
 

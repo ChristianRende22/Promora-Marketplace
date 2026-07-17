@@ -6,19 +6,16 @@ namespace App\Rules\Fixed;
 
 use App\Contracts\FixedValidationRuleInterface;
 use App\Entities\PromoCode;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 class CodeExistsRule implements FixedValidationRuleInterface
 {
-    public function isSatisfiedBy(?PromoCode $promoCode): bool
+    public function isSatisfiedBy(?PromoCode $promoCode): ValidationResult
     {
         if ($promoCode === null) {
-            throw new RuleValidationException(
-                'invalid_code',
-                'The promo code does not exist.'
-            );
+            return ValidationResult::failed('invalid_code');
         }
 
-        return true;
+        return ValidationResult::success();
     }
 }

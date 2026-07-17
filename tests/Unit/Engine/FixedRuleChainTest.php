@@ -7,83 +7,71 @@ namespace Tests\Unit\Engine;
 use App\Contracts\FixedValidationRuleInterface;
 use App\Engine\FixedRuleChain;
 use App\Entities\PromoCode;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 use PHPUnit\Framework\TestCase;
 use Tests\Factories\PromoCodeFactory;
 
 class FixedRuleChainTest extends TestCase
 {
-    public function test_it_runs_all_rules_in_order_when_all_pass(): void
+    public function test_it_returns_success_when_all_rules_pass(): void
     {
-        $calls = [];
-        $ruleA = $this->passingRule(function () use (&$calls): void {
-            $calls[] = 'A';
-        });
-        $ruleB = $this->passingRule(function () use (&$calls): void {
-            $calls[] = 'B';
-        });
+        $chain = new FixedRuleChain([
+            $this->passingRule(),
+            $this->passingRule(),
+        ]);
 
-        $chain = new FixedRuleChain([$ruleA, $ruleB]);
-        $promoCode = PromoCodeFactory::new()->create();
+        $result = $chain->run(PromoCodeFactory::new()->create());
 
-        $chain->run($promoCode);
-
-        $this->assertEquals(['A', 'B'], $calls);
+        $this->assertTrue($result->isValid);
     }
 
     public function test_it_stops_at_the_first_rule_that_fails_and_does_not_run_the_rest(): void
     {
-        $calls = [];
-        $ruleA = $this->failingRule('invalid_code', function () use (&$calls): void {
-            $calls[] = 'A';
-        });
-        $ruleB = $this->passingRule(function () use (&$calls): void {
-            $calls[] = 'B';
+        $secondRuleWasCalled = false;
+        $secondRule = $this->passingRule(function () use (&$secondRuleWasCalled): void {
+            $secondRuleWasCalled = true;
         });
 
-        $chain = new FixedRuleChain([$ruleA, $ruleB]);
-        $promoCode = PromoCodeFactory::new()->create();
+        $chain = new FixedRuleChain([
+            $this->failingRule('invalid_code'),
+            $secondRule,
+        ]);
 
-        try {
-            $chain->run($promoCode);
-            $this->fail('Expected RuleValidationException was not thrown');
-        } catch (RuleValidationException $e) {
-            $this->assertEquals('invalid_code', $e->getErrorCode());
-        }
+        $result = $chain->run(PromoCodeFactory::new()->create());
 
-        $this->assertEquals(['A'], $calls);
+        $this->assertFalse($result->isValid);
+        $this->assertEquals('invalid_code', $result->errorCode);
+        $this->assertFalse($secondRuleWasCalled);
     }
 
-    private function passingRule(callable $onCall): FixedValidationRuleInterface
+    private function passingRule(?callable $onCall = null): FixedValidationRuleInterface
     {
         return new class ($onCall) implements FixedValidationRuleInterface {
             public function __construct(private readonly mixed $onCall)
             {
             }
 
-            public function isSatisfiedBy(?PromoCode $promoCode): bool
+            public function isSatisfiedBy(?PromoCode $promoCode): ValidationResult
             {
-                ($this->onCall)();
+                if ($this->onCall !== null) {
+                    ($this->onCall)();
+                }
 
-                return true;
+                return ValidationResult::success();
             }
         };
     }
 
-    private function failingRule(string $errorCode, callable $onCall): FixedValidationRuleInterface
+    private function failingRule(string $errorCode): FixedValidationRuleInterface
     {
-        return new class ($errorCode, $onCall) implements FixedValidationRuleInterface {
-            public function __construct(
-                private readonly string $errorCode,
-                private readonly mixed $onCall
-            ) {
+        return new class ($errorCode) implements FixedValidationRuleInterface {
+            public function __construct(private readonly string $errorCode)
+            {
             }
 
-            public function isSatisfiedBy(?PromoCode $promoCode): bool
+            public function isSatisfiedBy(?PromoCode $promoCode): ValidationResult
             {
-                ($this->onCall)();
-
-                throw new RuleValidationException($this->errorCode, 'blocked');
+                return ValidationResult::failed($this->errorCode);
             }
         };
     }

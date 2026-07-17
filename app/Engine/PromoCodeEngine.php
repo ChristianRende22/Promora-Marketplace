@@ -6,6 +6,7 @@ namespace App\Engine;
 
 use App\Contracts\OrderableInterface;
 use App\Contracts\RuleSpecificationInterface;
+use App\ValueObjects\ValidationResult;
 
 /**
  * Evalúa la colección de reglas configurables (Specifications) que
@@ -23,10 +24,16 @@ final class PromoCodeEngine
     {
     }
 
-    public function validate(OrderableInterface $order): void
+    public function validate(OrderableInterface $order): ValidationResult
     {
         foreach ($this->configurableRules as $rule) {
-            $rule->isSatisfiedBy($order);
+            $result = $rule->isSatisfiedBy($order);
+
+            if (!$result->isValid) {
+                return $result;
+            }
         }
+
+        return ValidationResult::success();
     }
 }

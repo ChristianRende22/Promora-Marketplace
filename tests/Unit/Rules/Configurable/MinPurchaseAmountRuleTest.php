@@ -15,10 +15,10 @@ class MinPurchaseAmountRuleTest extends TestCase
         $context = OrderContextFactory::new()->create();
         
         $orderExact = new FakeOrder(100.0, $context);
-        $this->assertTrue($rule->isSatisfiedBy($orderExact));
-        
+        $this->assertTrue($rule->isSatisfiedBy($orderExact)->isValid);
+
         $orderGreater = new FakeOrder(150.0, $context);
-        $this->assertTrue($rule->isSatisfiedBy($orderGreater));
+        $this->assertTrue($rule->isSatisfiedBy($orderGreater)->isValid);
     }
 
     public function test_it_blocks_order_and_throws_exception_when_subtotal_is_less_than_minimum()

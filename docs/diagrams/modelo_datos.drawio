@@ -1,0 +1,58 @@
+<mxfile host="65bd71144e">
+    <diagram id="modelo-datos-promo" name="Modelo de Datos - Motor de Codigos Promocionales">
+        <mxGraphModel dx="1349" dy="914" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="cat" value="&lt;b&gt;CATEGORIES&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;&lt;div&gt;PK&amp;nbsp;&amp;nbsp;id : bigint&lt;/div&gt;&lt;div&gt;FK&amp;nbsp;&amp;nbsp;parent_id : bigint (nullable)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name : string&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="50" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pc" value="&lt;b&gt;PROMO_CODES&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;&lt;div&gt;PK&amp;nbsp;&amp;nbsp;id : bigint&lt;/div&gt;&lt;div&gt;UK&amp;nbsp;&amp;nbsp;code : string (codigo unico)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;type : enum(fixed|percent|tiered)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;value : decimal (monto o %)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;status : enum(draft|active|paused|expired)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;starts_at : datetime&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ends_at : datetime&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at / updated_at : datetime&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="40" width="260" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="usr" value="&lt;b&gt;USERS&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;&lt;div&gt;PK&amp;nbsp;&amp;nbsp;id : bigint&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name : string&lt;/div&gt;&lt;div&gt;UK&amp;nbsp;&amp;nbsp;email : string&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="40" width="200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pcr" value="&lt;b&gt;PROMO_CODE_RULES&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;&lt;div&gt;PK&amp;nbsp;&amp;nbsp;id : bigint&lt;/div&gt;&lt;div&gt;FK&amp;nbsp;&amp;nbsp;promo_code_id : bigint&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;rule_key : string&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;(min_purchase_amount, eligible_categories,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;first_order_only, user_usage_limit,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;global_usage_limit, global_amount_limit,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;restricted_usage)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;parameters : json&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at : datetime&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="320" width="260" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="pct" value="&lt;b&gt;PROMO_CODE_TIERS&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;&lt;div&gt;PK&amp;nbsp;&amp;nbsp;id : bigint&lt;/div&gt;&lt;div&gt;FK&amp;nbsp;&amp;nbsp;promo_code_id : bigint (solo type=tiered)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;min_orders : int&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;discount_percent : decimal&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="320" width="240" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="pcrd" value="&lt;b&gt;PROMO_CODE_REDEMPTIONS&lt;/b&gt;&lt;hr size=&quot;1&quot;&gt;&lt;div&gt;PK&amp;nbsp;&amp;nbsp;id : bigint&lt;/div&gt;&lt;div&gt;FK&amp;nbsp;&amp;nbsp;promo_code_id : bigint&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;orderable_type : string (polimorfico)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;orderable_id : bigint&lt;/div&gt;&lt;div&gt;FK&amp;nbsp;&amp;nbsp;buyer_id : bigint&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;discounted_amount : decimal&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;is_paid : boolean (solo pagadas consumen cupo)&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;created_at : datetime&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="300" width="260" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="pcu" value="&lt;b&gt;PROMO_CODE_USER&lt;/b&gt;&lt;div&gt;(pivote - restricted_usage)&lt;/div&gt;&lt;hr size=&quot;1&quot;&gt;&lt;div&gt;PK,FK&amp;nbsp;&amp;nbsp;promo_code_id : bigint&lt;/div&gt;&lt;div&gt;PK,FK&amp;nbsp;&amp;nbsp;user_id : bigint&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="560" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-cat-cat" value="padre / hijo" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;startArrow=ERzeroToOne;startFill=0;endArrow=ERmany;endFill=0;fontSize=11;" parent="1" source="cat" target="cat" edge="1">
+                    <mxGeometry x="1" y="-27" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint y="10"/>
+                            <mxPoint y="90"/>
+                        </Array>
+                        <mxPoint x="-10" y="2" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e-pc-pcr" value="reglas activas (config, no codigo)" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=11;" parent="1" source="pc" target="pcr" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-pc-pct" value="tramos si type=tiered" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=11;" parent="1" source="pc" target="pct" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-pc-pcrd" value="registro por cada uso" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=11;" parent="1" source="pc" target="pcrd" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-pc-pcu" value="usuarios autorizados" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=11;" parent="1" source="pc" target="pcu" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-usr-pcu" value="restricted_usage" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=11;" parent="1" source="usr" target="pcu" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-usr-pcrd" value="comprador" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;fontSize=11;" parent="1" source="usr" target="pcrd" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

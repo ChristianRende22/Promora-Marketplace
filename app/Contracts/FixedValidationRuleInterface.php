@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Contracts;
 
 use App\Entities\PromoCode;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 /**
  * Contrato de las 3 reglas fijas (TDR sección 2). A diferencia de RuleSpecificationInterface
@@ -15,8 +15,5 @@ use App\Exceptions\RuleValidationException;
  */
 interface FixedValidationRuleInterface
 {
-    /**
-     * @throws RuleValidationException Si la regla falla, expone un código de error semántico.
-     */
-    public function isSatisfiedBy(?PromoCode $promoCode): bool;
+    public function isSatisfiedBy(?PromoCode $promoCode): ValidationResult;
 }

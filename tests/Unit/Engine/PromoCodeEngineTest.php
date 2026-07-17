@@ -7,29 +7,29 @@ namespace Tests\Unit\Engine;
 use App\Contracts\OrderableInterface;
 use App\Contracts\RuleSpecificationInterface;
 use App\Engine\PromoCodeEngine;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 use PHPUnit\Framework\TestCase;
 use Tests\Factories\OrderContextFactory;
 use Tests\Fakes\FakeOrder;
 
 /**
- * Según el ASD (sección "Colaboración entre patrones"): PromoCodeEngine evalúa
- * únicamente la colección de RuleSpecificationInterface (reglas configurables)
- * que PromoCodeRuleFactory ya construyó. Las 3 reglas fijas las corre el
- * caso de uso directamente contra FixedRuleChain, antes de llegar aquí.
+ * Según el ASD: PromoCodeEngine evalúa únicamente la colección de
+ * RuleSpecificationInterface (reglas configurables) que PromoCodeRuleFactory
+ * ya construyó. Las 3 reglas fijas las corre el caso de uso directamente
+ * contra FixedRuleChain, antes de llegar aquí.
  */
 class PromoCodeEngineTest extends TestCase
 {
-    public function test_it_passes_validation_when_all_configurable_rules_are_satisfied(): void
+    public function test_it_returns_success_when_all_configurable_rules_are_satisfied(): void
     {
         $engine = new PromoCodeEngine([
             $this->passingConfigurableRule(),
             $this->passingConfigurableRule(),
         ]);
 
-        $engine->validate($this->fakeOrder());
+        $result = $engine->validate($this->fakeOrder());
 
-        $this->addToAssertionCount(1);
+        $this->assertTrue($result->isValid);
     }
 
     public function test_it_stops_at_the_first_configurable_rule_that_fails_and_does_not_evaluate_the_rest(): void
@@ -44,13 +44,10 @@ class PromoCodeEngineTest extends TestCase
             $secondRule,
         ]);
 
-        try {
-            $engine->validate($this->fakeOrder());
-            $this->fail('Expected RuleValidationException was not thrown');
-        } catch (RuleValidationException $e) {
-            $this->assertEquals('min_amount_required', $e->getErrorCode());
-        }
+        $result = $engine->validate($this->fakeOrder());
 
+        $this->assertFalse($result->isValid);
+        $this->assertEquals('min_amount_required', $result->errorCode);
         $this->assertFalse($secondRuleWasCalled);
     }
 
@@ -71,13 +68,13 @@ class PromoCodeEngineTest extends TestCase
             {
             }
 
-            public function isSatisfiedBy(OrderableInterface $order): bool
+            public function isSatisfiedBy(OrderableInterface $order): ValidationResult
             {
                 if ($this->onCall !== null) {
                     ($this->onCall)();
                 }
 
-                return true;
+                return ValidationResult::success();
             }
         };
     }
@@ -89,9 +86,9 @@ class PromoCodeEngineTest extends TestCase
             {
             }
 
-            public function isSatisfiedBy(OrderableInterface $order): bool
+            public function isSatisfiedBy(OrderableInterface $order): ValidationResult
             {
-                throw new RuleValidationException($this->errorCode, 'blocked');
+                return ValidationResult::failed($this->errorCode);
             }
         };
     }
