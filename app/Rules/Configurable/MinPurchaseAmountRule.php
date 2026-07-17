@@ -4,7 +4,7 @@ namespace App\Rules\Configurable;
 
 use App\Contracts\OrderableInterface;
 use App\Contracts\RuleSpecificationInterface;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 class MinPurchaseAmountRule implements RuleSpecificationInterface
 {
@@ -12,15 +12,12 @@ class MinPurchaseAmountRule implements RuleSpecificationInterface
     {
     }
 
-    public function isSatisfiedBy(OrderableInterface $order): bool
+    public function isSatisfiedBy(OrderableInterface $order): ValidationResult
     {
         if ($order->getSubtotal() < $this->minAmount) {
-            throw new RuleValidationException(
-                'min_amount_required', 
-                'The order subtotal does not meet the minimum required amount for this promo code.'
-            );
+            return ValidationResult::failed('min_amount_required');
         }
 
-        return true;
+        return ValidationResult::success();
     }
 }

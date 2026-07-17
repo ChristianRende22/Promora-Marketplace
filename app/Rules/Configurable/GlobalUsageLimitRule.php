@@ -5,7 +5,7 @@ namespace App\Rules\Configurable;
 use App\Contracts\OrderableInterface;
 use App\Contracts\PromoCodeRepositoryInterface;
 use App\Contracts\RuleSpecificationInterface;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 class GlobalUsageLimitRule implements RuleSpecificationInterface
 {
@@ -16,15 +16,15 @@ class GlobalUsageLimitRule implements RuleSpecificationInterface
     ) {
     }
 
-    public function isSatisfiedBy(OrderableInterface $order): bool
+    public function isSatisfiedBy(OrderableInterface $order): ValidationResult
     {
         $context = $order->getOrderContext();
         $currentUses = $this->repository->getGlobalUsageCount($this->promoCode, $context->currentOrders);
 
         if ($currentUses >= $this->maxUses) {
-            throw new RuleValidationException('usage_limit_reached', 'This promo code has reached its maximum global usage limit.');
+            return ValidationResult::failed('usage_limit_reached');
         }
 
-        return true;
+        return ValidationResult::success();
     }
 }

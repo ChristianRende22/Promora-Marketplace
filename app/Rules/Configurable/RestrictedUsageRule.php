@@ -5,7 +5,7 @@ namespace App\Rules\Configurable;
 use App\Contracts\OrderableInterface;
 use App\Contracts\PromoCodeRepositoryInterface;
 use App\Contracts\RuleSpecificationInterface;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 class RestrictedUsageRule implements RuleSpecificationInterface
 {
@@ -15,15 +15,15 @@ class RestrictedUsageRule implements RuleSpecificationInterface
     ) {
     }
 
-    public function isSatisfiedBy(OrderableInterface $order): bool
+    public function isSatisfiedBy(OrderableInterface $order): ValidationResult
     {
         $context = $order->getOrderContext();
         $isAllowed = $this->repository->isUserInRestrictedList($this->promoCode, $context->buyerProfile->getId());
 
         if (!$isAllowed) {
-            throw new RuleValidationException('restricted_usage', 'This promo code is restricted and not assigned to the current user.');
+            return ValidationResult::failed('restricted_usage');
         }
 
-        return true;
+        return ValidationResult::success();
     }
 }

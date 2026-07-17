@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Rules\Configurable;
 
-use App\Exceptions\RuleValidationException;
 use App\Rules\Configurable\EligibleCategoriesRule;
 use PHPUnit\Framework\TestCase;
 use Tests\Factories\OrderContextFactory;
@@ -16,7 +15,10 @@ class EligibleCategoriesRuleTest extends TestCase
         $context = OrderContextFactory::new()->withCategoryId(3)->create();
         $order = new FakeOrder(100.0, $context);
         
-        $this->assertTrue($rule->isSatisfiedBy($order));
+        $result = $rule->isSatisfiedBy($order);
+        
+        $this->assertTrue($result->isValid);
+        $this->assertNull($result->errorCode);
     }
 
     public function test_it_blocks_order_and_throws_exception_when_category_is_not_eligible()
@@ -25,11 +27,9 @@ class EligibleCategoriesRuleTest extends TestCase
         $context = OrderContextFactory::new()->withCategoryId(99)->create();
         $order = new FakeOrder(100.0, $context);
 
-        try {
-            $rule->isSatisfiedBy($order);
-            $this->fail('Expected RuleValidationException was not thrown');
-        } catch (RuleValidationException $e) {
-            $this->assertEquals('invalid_code', $e->getErrorCode());
-        }
+        $result = $rule->isSatisfiedBy($order);
+        
+        $this->assertFalse($result->isValid);
+        $this->assertEquals('invalid_code', $result->errorCode);
     }
 }

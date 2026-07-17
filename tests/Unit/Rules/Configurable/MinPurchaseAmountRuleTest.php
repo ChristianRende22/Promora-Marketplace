@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Rules\Configurable;
 
-use App\Exceptions\RuleValidationException;
 use App\Rules\Configurable\MinPurchaseAmountRule;
 use PHPUnit\Framework\TestCase;
 use Tests\Factories\OrderContextFactory;
@@ -28,11 +27,9 @@ class MinPurchaseAmountRuleTest extends TestCase
         $context = OrderContextFactory::new()->create();
         $order = new FakeOrder(99.99, $context);
 
-        try {
-            $rule->isSatisfiedBy($order);
-            $this->fail('Expected RuleValidationException was not thrown');
-        } catch (RuleValidationException $e) {
-            $this->assertEquals('min_amount_required', $e->getErrorCode());
-        }
+        $result = $rule->isSatisfiedBy($order);
+        
+        $this->assertFalse($result->isValid);
+        $this->assertEquals('min_amount_required', $result->errorCode);
     }
 }

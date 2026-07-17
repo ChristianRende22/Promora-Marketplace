@@ -5,7 +5,7 @@ namespace App\Rules\Configurable;
 use App\Contracts\OrderableInterface;
 use App\Contracts\PromoCodeRepositoryInterface;
 use App\Contracts\RuleSpecificationInterface;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 class GlobalAmountLimitRule implements RuleSpecificationInterface
 {
@@ -16,15 +16,15 @@ class GlobalAmountLimitRule implements RuleSpecificationInterface
     ) {
     }
 
-    public function isSatisfiedBy(OrderableInterface $order): bool
+    public function isSatisfiedBy(OrderableInterface $order): ValidationResult
     {
         $context = $order->getOrderContext();
         $currentAmount = $this->repository->getGlobalDiscountAmount($this->promoCode, $context->currentOrders);
 
-        if ($currentAmount >= $this->maxAmount) {
-            throw new RuleValidationException('maximum_discount_reached', 'This promo code has reached its maximum global discount amount.');
+        if ($currentAmount + $order->getSubtotal() > $this->maxAmount) {
+            return ValidationResult::failed('maximum_discount_reached');
         }
 
-        return true;
+        return ValidationResult::success();
     }
 }

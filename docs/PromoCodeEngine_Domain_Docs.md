@@ -25,7 +25,7 @@ Es un objeto de valor **inmutable** cuya única responsabilidad (SRP) es portar 
 Contrato para consultar históricos transaccionales (límites de uso, restricciones, montos descontados) sin depender de Eloquent en las reglas.
 
 ### `RuleSpecificationInterface`
-Basado en el patrón **Specification**. Cada regla implementa este contrato, que expone el método `isSatisfiedBy(OrderableInterface $order): bool`. Si falla, arroja una `RuleValidationException` con un código de error semántico.
+Basado en el patrón **Specification**. Cada regla implementa este contrato, que expone el método `isSatisfiedBy(OrderableInterface $order): ValidationResult`. Si falla, retorna un objeto Result marcado como fallido con su respectivo código de error semántico (ej. `ValidationResult::failed('invalid_code')`).
 
 ## 3. Reglas Implementadas (en `app/Rules/Configurable/`)
 
@@ -39,6 +39,7 @@ Basado en el patrón **Specification**. Cada regla implementa este contrato, que
 | **`GlobalAmountLimitRule`** | Asegura que el monto total descontado históricamente no supere el presupuesto. | `maximum_discount_reached` |
 | **`RestrictedUsageRule`** | Valida mediante el repositorio que el `$buyerProfile->getId()` pertenezca a la lista de usuarios permitidos. | `restricted_usage` |
 
+
 ## 4. Estrategia de Testing (TDD)
 
 El 100% de las reglas se implementaron siguiendo **Test-Driven Development (TDD)** mediante `PHPUnit`.
@@ -49,7 +50,7 @@ Se generaron en `tests/Fakes` y `tests/Factories`:
 * **`FakeOrder` & `FakeCategory`**: *Test doubles* para simular una orden o categoría e inyectar un estado controlado.
 * **`FakePromoCodeRepository`**: Una implementación en memoria que permite definir usos y listas blancas sin tocar SQL.
 
-Cada regla posee su clase de pruebas (ej. `MinPurchaseAmountRuleTest`) con tests de éxito y bloqueo que validan específicamente la emisión del código de error semántico esperado.
+Cada regla posee su clase de pruebas (ej. `MinPurchaseAmountRuleTest`) con tests de éxito y bloqueo que validan específicamente la emisión del código de error semántico esperado dentro del objeto `ValidationResult`.
 
 ## 5. Cumplimiento de Principios SOLID
 
