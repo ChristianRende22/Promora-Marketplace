@@ -9,7 +9,10 @@ use Tests\Fakes\FakeCategory;
 
 class OrderContextFactory
 {
+    private string|int $buyerProfile = 'buyer-1';
     private bool $isFirstOrder = false;
+    private string|int $categoryId = 'category-1';
+    private array $currentOrders = [];
 
     public static function new(): self
     {
@@ -44,8 +47,8 @@ class OrderContextFactory
     {
         $buyer = new BuyerProfile($this->buyerProfile, $this->isFirstOrder);
         $category = new FakeCategory($this->categoryId);
-        $orders = new OrderCollection();
-        
+        $orders = new OrderCollection($this->currentOrders);
+
         return new OrderContext(
             $buyer,
             $category,

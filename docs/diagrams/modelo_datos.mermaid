@@ -1,0 +1,63 @@
+erDiagram
+    PROMO_CODES {
+        bigint id PK
+        string code UK "codigo unico"
+        enum type "fixed | percent | tiered"
+        decimal value "monto o porcentaje base"
+        enum status "draft | active | paused | expired"
+        datetime starts_at "inicio vigencia"
+        datetime ends_at "fin vigencia"
+        datetime created_at
+        datetime updated_at
+    }
+
+    PROMO_CODE_RULES {
+        bigint id PK
+        bigint promo_code_id FK
+        string rule_key "min_purchase_amount, eligible_categories, ..."
+        json parameters "parametros de la regla"
+        datetime created_at
+    }
+
+    PROMO_CODE_TIERS {
+        bigint id PK
+        bigint promo_code_id FK "solo codigos tiered"
+        int min_orders "minimo de ordenes previas"
+        decimal discount_percent "porcentaje del tramo"
+    }
+
+    PROMO_CODE_REDEMPTIONS {
+        bigint id PK
+        bigint promo_code_id FK
+        string orderable_type "entidad de orden (polimorfico)"
+        bigint orderable_id "id de la orden"
+        bigint buyer_id FK
+        decimal discounted_amount "monto descontado"
+        boolean is_paid "solo pagadas consumen cupo"
+        datetime created_at
+    }
+
+    PROMO_CODE_USER {
+        bigint promo_code_id PK, FK
+        bigint user_id PK, FK
+    }
+
+    USERS {
+        bigint id PK
+        string name
+        string email UK
+    }
+
+    CATEGORIES {
+        bigint id PK
+        bigint parent_id FK "jerarquia padre/hijo (nullable)"
+        string name
+    }
+
+    PROMO_CODES ||--o{ PROMO_CODE_RULES : "reglas activas (config, no codigo)"
+    PROMO_CODES ||--o{ PROMO_CODE_TIERS : "tramos si type=tiered"
+    PROMO_CODES ||--o{ PROMO_CODE_REDEMPTIONS : "registro por cada uso"
+    PROMO_CODES ||--o{ PROMO_CODE_USER : "usuarios autorizados"
+    USERS ||--o{ PROMO_CODE_USER : "restricted_usage"
+    USERS ||--o{ PROMO_CODE_REDEMPTIONS : "comprador"
+    CATEGORIES |o--o{ CATEGORIES : "padre/hijo"
