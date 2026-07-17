@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 interface RuleSpecificationInterface
 {
@@ -10,8 +10,7 @@ interface RuleSpecificationInterface
      * Evaluates the given order against the rule logic.
      * 
      * @param OrderableInterface $order
-     * @return bool True if rule is satisfied
-     * @throws RuleValidationException If the rule fails, exposing a semantic error code.
+     * @return ValidationResult
      */
-    public function isSatisfiedBy(OrderableInterface $order): bool;
+    public function isSatisfiedBy(OrderableInterface $order): ValidationResult;
 }

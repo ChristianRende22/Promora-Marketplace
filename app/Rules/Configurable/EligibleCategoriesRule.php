@@ -4,7 +4,7 @@ namespace App\Rules\Configurable;
 
 use App\Contracts\OrderableInterface;
 use App\Contracts\RuleSpecificationInterface;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 class EligibleCategoriesRule implements RuleSpecificationInterface
 {
@@ -15,7 +15,7 @@ class EligibleCategoriesRule implements RuleSpecificationInterface
     {
     }
 
-    public function isSatisfiedBy(OrderableInterface $order): bool
+    public function isSatisfiedBy(OrderableInterface $order): ValidationResult
     {
         $category = $order->getOrderContext()->category;
         
@@ -28,9 +28,9 @@ class EligibleCategoriesRule implements RuleSpecificationInterface
         }
 
         if (!$isEligible) {
-            throw new RuleValidationException('invalid_code', 'The order category is not eligible for this promo code.');
+            return ValidationResult::failed('invalid_code');
         }
 
-        return true;
+        return ValidationResult::success();
     }
 }

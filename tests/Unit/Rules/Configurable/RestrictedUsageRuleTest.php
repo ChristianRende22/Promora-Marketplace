@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Rules\Configurable;
 
-use App\Exceptions\RuleValidationException;
 use App\Rules\Configurable\RestrictedUsageRule;
 use PHPUnit\Framework\TestCase;
 use Tests\Factories\OrderContextFactory;
@@ -20,7 +19,10 @@ class RestrictedUsageRuleTest extends TestCase
         $context = OrderContextFactory::new()->create();
         $order = new FakeOrder(100.0, $context);
         
-        $this->assertTrue($rule->isSatisfiedBy($order));
+        $result = $rule->isSatisfiedBy($order);
+        
+        $this->assertTrue($result->isValid);
+        $this->assertNull($result->errorCode);
     }
 
     public function test_it_blocks_order_and_throws_exception_when_user_is_not_in_restricted_list()
@@ -32,11 +34,9 @@ class RestrictedUsageRuleTest extends TestCase
         $context = OrderContextFactory::new()->create();
         $order = new FakeOrder(100.0, $context);
 
-        try {
-            $rule->isSatisfiedBy($order);
-            $this->fail('Expected RuleValidationException was not thrown');
-        } catch (RuleValidationException $e) {
-            $this->assertEquals('restricted_usage', $e->getErrorCode());
-        }
+        $result = $rule->isSatisfiedBy($order);
+        
+        $this->assertFalse($result->isValid);
+        $this->assertEquals('restricted_usage', $result->errorCode);
     }
 }

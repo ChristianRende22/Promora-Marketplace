@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Rules\Configurable;
 
-use App\Exceptions\RuleValidationException;
 use App\Rules\Configurable\GlobalAmountLimitRule;
 use PHPUnit\Framework\TestCase;
 use Tests\Factories\OrderContextFactory;
@@ -20,7 +19,10 @@ class GlobalAmountLimitRuleTest extends TestCase
         $context = OrderContextFactory::new()->create();
         $order = new FakeOrder(100.0, $context);
         
-        $this->assertTrue($rule->isSatisfiedBy($order));
+        $result = $rule->isSatisfiedBy($order);
+        
+        $this->assertTrue($result->isValid);
+        $this->assertNull($result->errorCode);
     }
 
     public function test_it_blocks_order_and_throws_exception_when_global_amount_reaches_limit()
@@ -32,11 +34,9 @@ class GlobalAmountLimitRuleTest extends TestCase
         $context = OrderContextFactory::new()->create();
         $order = new FakeOrder(100.0, $context);
 
-        try {
-            $rule->isSatisfiedBy($order);
-            $this->fail('Expected RuleValidationException was not thrown');
-        } catch (RuleValidationException $e) {
-            $this->assertEquals('maximum_discount_reached', $e->getErrorCode());
-        }
+        $result = $rule->isSatisfiedBy($order);
+        
+        $this->assertFalse($result->isValid);
+        $this->assertEquals('maximum_discount_reached', $result->errorCode);
     }
 }

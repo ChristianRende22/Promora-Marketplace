@@ -4,7 +4,7 @@ namespace App\Rules\Configurable;
 
 use App\Contracts\OrderableInterface;
 use App\Contracts\RuleSpecificationInterface;
-use App\Exceptions\RuleValidationException;
+use App\ValueObjects\ValidationResult;
 
 class FirstOrderOnlyRule implements RuleSpecificationInterface
 {
@@ -12,14 +12,14 @@ class FirstOrderOnlyRule implements RuleSpecificationInterface
     {
     }
 
-    public function isSatisfiedBy(OrderableInterface $order): bool
+    public function isSatisfiedBy(OrderableInterface $order): ValidationResult
     {
         $context = $order->getOrderContext();
         
         if (!$context->buyerProfile->isFirstOrder()) {
-            throw new RuleValidationException('code_already_used', 'This promo code is valid for first-time orders only.');
+            return ValidationResult::failed('code_already_used');
         }
 
-        return true;
+        return ValidationResult::success();
     }
 }
