@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\PromoCode\Contracts;
+namespace App\Contracts;
 
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
+use App\Exceptions\RuleValidationException;
 
 interface RuleSpecificationInterface
 {

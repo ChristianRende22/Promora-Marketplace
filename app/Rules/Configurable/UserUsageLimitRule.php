@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domain\PromoCode\Rules;
+namespace App\Rules\Configurable;
 
-use App\Domain\PromoCode\Contracts\OrderableInterface;
-use App\Domain\PromoCode\Contracts\PromoCodeRepositoryInterface;
-use App\Domain\PromoCode\Contracts\RuleSpecificationInterface;
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
+use App\Contracts\OrderableInterface;
+use App\Contracts\PromoCodeRepositoryInterface;
+use App\Contracts\RuleSpecificationInterface;
+use App\Exceptions\RuleValidationException;
 
 class UserUsageLimitRule implements RuleSpecificationInterface
 {
@@ -19,7 +19,7 @@ class UserUsageLimitRule implements RuleSpecificationInterface
     public function isSatisfiedBy(OrderableInterface $order): bool
     {
         $context = $order->getOrderContext();
-        $currentUses = $this->repository->getUserUsageCount($this->promoCode, $context->buyerProfile, $context->currentOrders);
+        $currentUses = $this->repository->getUserUsageCount($this->promoCode, $context->buyerProfile->getId(), $context->currentOrders);
 
         if ($currentUses >= $this->maxUses) {
             throw new RuleValidationException('usage_limit_reached', 'The user has reached the maximum usage limit for this promo code.');

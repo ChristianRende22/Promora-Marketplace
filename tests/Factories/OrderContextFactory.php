@@ -1,14 +1,15 @@
 <?php
 
-namespace Tests\Domain\PromoCode\Factories;
+namespace Tests\Factories;
 
-use App\Domain\PromoCode\ValueObjects\OrderContext;
+use App\ValueObjects\OrderContext;
+use App\ValueObjects\BuyerProfile;
+use App\ValueObjects\OrderCollection;
+use Tests\Fakes\FakeCategory;
 
 class OrderContextFactory
 {
-    private string $buyerProfile = 'default_buyer';
-    private int|string $categoryId = 1;
-    private array $currentOrders = [];
+    private bool $isFirstOrder = false;
 
     public static function new(): self
     {
@@ -18,6 +19,12 @@ class OrderContextFactory
     public function withBuyerProfile(string $profile): self
     {
         $this->buyerProfile = $profile;
+        return $this;
+    }
+    
+    public function withIsFirstOrder(bool $isFirstOrder): self
+    {
+        $this->isFirstOrder = $isFirstOrder;
         return $this;
     }
 
@@ -35,10 +42,14 @@ class OrderContextFactory
 
     public function create(): OrderContext
     {
+        $buyer = new BuyerProfile($this->buyerProfile, $this->isFirstOrder);
+        $category = new FakeCategory($this->categoryId);
+        $orders = new OrderCollection();
+        
         return new OrderContext(
-            $this->buyerProfile,
-            $this->categoryId,
-            $this->currentOrders
+            $buyer,
+            $category,
+            $orders
         );
     }
 }

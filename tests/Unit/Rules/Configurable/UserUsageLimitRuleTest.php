@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Unit\Domain\PromoCode\Rules;
+namespace Tests\Unit\Rules\Configurable;
 
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
-use App\Domain\PromoCode\Rules\UserUsageLimitRule;
+use App\Exceptions\RuleValidationException;
+use App\Rules\Configurable\UserUsageLimitRule;
 use PHPUnit\Framework\TestCase;
-use Tests\Domain\PromoCode\Factories\OrderContextFactory;
-use Tests\Domain\PromoCode\Fakes\FakeOrder;
-use Tests\Domain\PromoCode\Fakes\FakePromoCodeRepository;
+use Tests\Factories\OrderContextFactory;
+use Tests\Fakes\FakeOrder;
+use Tests\Fakes\FakePromoCodeRepository;
 
 class UserUsageLimitRuleTest extends TestCase
 {

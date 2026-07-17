@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domain\PromoCode\Rules;
+namespace App\Rules\Configurable;
 
-use App\Domain\PromoCode\Contracts\OrderableInterface;
-use App\Domain\PromoCode\Contracts\PromoCodeRepositoryInterface;
-use App\Domain\PromoCode\Contracts\RuleSpecificationInterface;
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
+use App\Contracts\OrderableInterface;
+use App\Contracts\PromoCodeRepositoryInterface;
+use App\Contracts\RuleSpecificationInterface;
+use App\Exceptions\RuleValidationException;
 
 class RestrictedUsageRule implements RuleSpecificationInterface
 {
@@ -18,7 +18,7 @@ class RestrictedUsageRule implements RuleSpecificationInterface
     public function isSatisfiedBy(OrderableInterface $order): bool
     {
         $context = $order->getOrderContext();
-        $isAllowed = $this->repository->isUserInRestrictedList($this->promoCode, $context->buyerProfile);
+        $isAllowed = $this->repository->isUserInRestrictedList($this->promoCode, $context->buyerProfile->getId());
 
         if (!$isAllowed) {
             throw new RuleValidationException('restricted_usage', 'This promo code is restricted and not assigned to the current user.');

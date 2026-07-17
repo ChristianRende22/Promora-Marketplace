@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Domain\PromoCode\Fakes;
+namespace Tests\Fakes;
 
-use App\Domain\PromoCode\Contracts\PromoCodeRepositoryInterface;
+use App\Contracts\PromoCodeRepositoryInterface;
+use App\Contracts\OrderCollectionInterface;
 
 class FakePromoCodeRepository implements PromoCodeRepositoryInterface
 {
@@ -17,22 +18,22 @@ class FakePromoCodeRepository implements PromoCodeRepositoryInterface
         return $this->hasPreviousOrders;
     }
 
-    public function getUserUsageCount(string $promoCode, string $buyerProfile, array $excludedOrderIds = []): int
+    public function getUserUsageCount(string $promoCode, string|int $buyerProfileId, OrderCollectionInterface $excludedOrders): int
     {
         return $this->userUsageCount;
     }
 
-    public function getGlobalUsageCount(string $promoCode, array $excludedOrderIds = []): int
+    public function getGlobalUsageCount(string $promoCode, OrderCollectionInterface $excludedOrders): int
     {
         return $this->globalUsageCount;
     }
 
-    public function getGlobalDiscountAmount(string $promoCode, array $excludedOrderIds = []): float
+    public function getGlobalDiscountAmount(string $promoCode, OrderCollectionInterface $excludedOrders): float
     {
         return $this->globalDiscountAmount;
     }
 
-    public function isUserInRestrictedList(string $promoCode, string $buyerProfile): bool
+    public function isUserInRestrictedList(string $promoCode, string|int $buyerProfileId): bool
     {
         return $this->isUserRestricted;
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\PromoCode\Rules;
+namespace App\Rules\Configurable;
 
-use App\Domain\PromoCode\Contracts\OrderableInterface;
-use App\Domain\PromoCode\Contracts\RuleSpecificationInterface;
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
+use App\Contracts\OrderableInterface;
+use App\Contracts\RuleSpecificationInterface;
+use App\Exceptions\RuleValidationException;
 
 class MinPurchaseAmountRule implements RuleSpecificationInterface
 {

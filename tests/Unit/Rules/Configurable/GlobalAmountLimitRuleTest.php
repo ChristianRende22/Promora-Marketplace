@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Unit\Domain\PromoCode\Rules;
+namespace Tests\Unit\Rules\Configurable;
 
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
-use App\Domain\PromoCode\Rules\GlobalAmountLimitRule;
+use App\Exceptions\RuleValidationException;
+use App\Rules\Configurable\GlobalAmountLimitRule;
 use PHPUnit\Framework\TestCase;
-use Tests\Domain\PromoCode\Factories\OrderContextFactory;
-use Tests\Domain\PromoCode\Fakes\FakeOrder;
-use Tests\Domain\PromoCode\Fakes\FakePromoCodeRepository;
+use Tests\Factories\OrderContextFactory;
+use Tests\Fakes\FakeOrder;
+use Tests\Fakes\FakePromoCodeRepository;
 
 class GlobalAmountLimitRuleTest extends TestCase
 {

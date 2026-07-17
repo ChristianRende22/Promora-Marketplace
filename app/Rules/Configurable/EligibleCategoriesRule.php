@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\PromoCode\Rules;
+namespace App\Rules\Configurable;
 
-use App\Domain\PromoCode\Contracts\OrderableInterface;
-use App\Domain\PromoCode\Contracts\RuleSpecificationInterface;
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
+use App\Contracts\OrderableInterface;
+use App\Contracts\RuleSpecificationInterface;
+use App\Exceptions\RuleValidationException;
 
 class EligibleCategoriesRule implements RuleSpecificationInterface
 {
@@ -17,9 +17,17 @@ class EligibleCategoriesRule implements RuleSpecificationInterface
 
     public function isSatisfiedBy(OrderableInterface $order): bool
     {
-        $categoryId = $order->getOrderContext()->categoryId;
+        $category = $order->getOrderContext()->category;
+        
+        $isEligible = false;
+        foreach ($this->eligibleCategoryIds as $eligibleId) {
+            if ($category->isDescendantOfOrEquals($eligibleId)) {
+                $isEligible = true;
+                break;
+            }
+        }
 
-        if (!in_array($categoryId, $this->eligibleCategoryIds, true)) {
+        if (!$isEligible) {
             throw new RuleValidationException('invalid_code', 'The order category is not eligible for this promo code.');
         }
 

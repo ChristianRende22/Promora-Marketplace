@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Unit\Domain\PromoCode\Rules;
+namespace Tests\Unit\Rules\Configurable;
 
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
-use App\Domain\PromoCode\Rules\EligibleCategoriesRule;
+use App\Exceptions\RuleValidationException;
+use App\Rules\Configurable\EligibleCategoriesRule;
 use PHPUnit\Framework\TestCase;
-use Tests\Domain\PromoCode\Factories\OrderContextFactory;
-use Tests\Domain\PromoCode\Fakes\FakeOrder;
+use Tests\Factories\OrderContextFactory;
+use Tests\Fakes\FakeOrder;
 
 class EligibleCategoriesRuleTest extends TestCase
 {

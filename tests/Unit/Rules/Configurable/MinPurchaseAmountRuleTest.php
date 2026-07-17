@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Unit\Domain\PromoCode\Rules;
+namespace Tests\Unit\Rules\Configurable;
 
-use App\Domain\PromoCode\Exceptions\RuleValidationException;
-use App\Domain\PromoCode\Rules\MinPurchaseAmountRule;
+use App\Exceptions\RuleValidationException;
+use App\Rules\Configurable\MinPurchaseAmountRule;
 use PHPUnit\Framework\TestCase;
-use Tests\Domain\PromoCode\Factories\OrderContextFactory;
-use Tests\Domain\PromoCode\Fakes\FakeOrder;
+use Tests\Factories\OrderContextFactory;
+use Tests\Fakes\FakeOrder;
 
 class MinPurchaseAmountRuleTest extends TestCase
 {
